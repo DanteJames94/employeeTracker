@@ -34,22 +34,22 @@ function start() {
         .then(answer => {
             switch (answer.questionStart) {
               case "View All Employees":
-                  //callback from "View All Employees"
+                  viewEmployees();
                 break;
               case "View All Departments":
                   viewDepartments();
                 break;
               case "View All Roles":
-                  //callback from "View All Employees"
+                  viewRoles();
                 break;
               case "Add Employee":
-                  //callback from "View All Employees"
+                  addEmployee();
                 break;
               case "Add Department":
                   addDepartment();
                 break;
               case "Add Role":
-                  //callback from "View All Employees"
+                  addRole();
                 break;
               case "Update Employee Role":
                   updateEmployeeRole();
@@ -73,6 +73,25 @@ function start() {
       questionStart();
     });
   }
+  
+  function viewEmployees() {
+    connection.query('SELECT * FROM employees', (err, res) => {
+      if (err) throw err;
+      // Log all results of the SELECT statement
+      console.table(res);
+      questionStart();
+    });
+  }
+  function viewRoles() {
+    connection.query('SELECT * FROM role', (err, res) => {
+      if (err) throw err;
+      // Log all results of the SELECT statement
+      console.table(res);
+      questionStart();
+    });
+  }
+
+
 
   function addDepartment() {
     inquirer.prompt ([
@@ -100,7 +119,62 @@ function start() {
 
     })
   }
+  function addRole() {
+    inquirer.prompt ([
+      { 
+          name: "role",
+          type: "input", 
+          message: "What role would you like to add?",
+          
+      }
+    ])
+    .then(answer => {
+     connection.query(
+        'INSERT INTO role SET ?',
+        {
+          name: answer.role,
+          
+        },
+        (err, res) => {
+          if (err) throw err;
+          console.log(`${res.affectedRows} Department Added!\n`);
+          
+          questionStart();
+        }
+      );
 
+    })
+  }
+  function addEmployee() {
+    inquirer.prompt ([
+      { 
+          name: "employee",
+          type: "input", 
+          message: "Who would you like to add?",
+          
+      }
+    ])
+    .then(answer => {
+     connection.query(
+        'INSERT INTO employees SET ?',
+        {
+          name: answer.employee,
+          
+        },
+        (err, res) => {
+          if (err) throw err;
+          console.log(`${res.affectedRows} Employee Added!\n`);
+          
+          questionStart();
+        }
+      );
+
+    })
+  }
+
+  
+  
+  
   function updateEmployeeRole () {
     connection.query("SELECT * FROM role", (err, res) => {
       if (err) throw err;
